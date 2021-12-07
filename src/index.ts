@@ -3,7 +3,7 @@
 
 export const DEFAULT_PATTERN_SIZE = 5;
 
-export type PatternRunner = (newline: () => void, print: (s: string) => void, size: number) => void;
+export type Runner = (newline: () => void, print: (s: string) => void, size?: number) => void;
 
 /**
  * Function to evaluate pattern from given source and size
@@ -12,7 +12,7 @@ export type PatternRunner = (newline: () => void, print: (s: string) => void, si
  *
  * @param source pattern source string to run
  *
- * @param size size to evaulate pattern
+ * @param size number value of `size` variable to evaulate pattern, use "inline" if `size` is defined in source
  *
  * @returns pattern source result
  *
@@ -30,17 +30,25 @@ export type PatternRunner = (newline: () => void, print: (s: string) => void, si
  * }`;
  * const result = patternRunner(source);
  * const resultWithSize = patternRunner(source, 3);
+ * const resultWithInlineSize = patternRunner(`const size = 3;` + source, "inline");
  * ```
  */
-export function patternRunner(source: string, size: number = DEFAULT_PATTERN_SIZE): string {
-  const evaluate = new Function("newline", "print", "size", source) as PatternRunner;
+export function patternRunner(source: string, size: number | "inline" = DEFAULT_PATTERN_SIZE): string {
   let result = "";
+
   function newline(): void {
     result += "\n";
   }
   function print(s: string): void {
     result += s;
   }
-  evaluate(newline, print, size);
+
+  const runner =
+    size == "inline"
+      ? (new Function("newline", "print", source) as Runner)
+      : (new Function("newline", "print", "size", source) as Runner);
+
+  runner(newline, print, size == "inline" ? undefined : size);
+
   return result;
 }
