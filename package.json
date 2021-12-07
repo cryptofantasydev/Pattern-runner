@@ -1,7 +1,7 @@
 {
   "name": "pattern-runner",
   "description": "Pattern runner for patterns.run",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "author": "Griko Nibras <git@griko.id>",
   "homepage": "https://github.com/grikomsn/pattern-runner",
   "repository": "https://github.com/grikomsn/pattern-runner.git",
